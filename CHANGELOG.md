@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/gabbium/dotnet-cleanarch-aspnetcore/compare/v1.0.0...v1.1.0) (2025-09-01)
+
+
+### Features
+
+* removing api versioning and some enhancements ([#2](https://github.com/gabbium/dotnet-cleanarch-aspnetcore/issues/2)) ([5462093](https://github.com/gabbium/dotnet-cleanarch-aspnetcore/commit/54620932505f54fae0e57c176e3922f1d708e861))
+
 # 1.0.0 (2025-07-27)
 
 
