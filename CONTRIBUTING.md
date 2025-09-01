@@ -1,28 +1,6 @@
 # Contributing
 
-Thanks for considering contributing! 🎉  
-This project follows **Conventional Commits** and uses **semantic-release** for fully automated versioning and NuGet publishing.
-
----
-
-## 🛠 How to contribute
-
-1. **Fork & clone** the repository
-2. Restore dependencies:
-   ```bash
-   dotnet restore
-   ```
-3. Build & run tests:
-   ```bash
-   dotnet build
-   dotnet test
-   ```
-4. Create a feature branch:
-   ```bash
-   git checkout -b feat/add-result-extension
-   ```
-5. Make your changes and commit using **Conventional Commits** (see below)
-6. Push your branch and open a Pull Request 🎉
+This project follows **Conventional Commits** and uses **semantic-release** for fully automated versioning.
 
 ---
 
@@ -67,7 +45,6 @@ When you merge into **main**:
 - Decide the next version (patch/minor/major)
 - Update `CHANGELOG.md` automatically
 - Create a GitHub Release
-- **Pack & publish a new version to NuGet automatically** 🎉
 
 No manual versioning or tagging is needed!
 
@@ -84,14 +61,3 @@ No manual versioning or tagging is needed!
 | refactor | Code change that neither fixes a bug nor adds a feature    |
 | test     | Adding or fixing tests                                     |
 | chore    | Maintenance tasks (build, tooling, CI, etc.)               |
-
----
-
-## 📦 Releasing
-
-Releases are **fully automated** via GitHub Actions + semantic-release.  
-Just merge your PR, and everything else happens automatically.
-
----
-
-Thanks for contributing! 🚀

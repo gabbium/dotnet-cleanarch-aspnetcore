@@ -3,86 +3,86 @@ namespace CleanArch.AspNetCore.UnitTests;
 public class ResultExtensionsTests
 {
     [Fact]
-    public void Match_WhenIsSuccess_ThenCallsOnSuccess()
+    public void Ok_WhenSuccess_ThenReturnsOk()
     {
         // Arrange
-        var successCallback = new Mock<Func<bool>>();
-        successCallback.Setup(c => c()).Returns(true);
+        var result = Result.Success(123);
 
-        var failureCallback = new Mock<Func<Result, bool>>();
-        failureCallback.Setup(c => c(It.IsAny<Result>())).Returns(false);
+        // Act
+        var output = result.Ok();
 
+        // Assert
+        var ok = Assert.IsType<Ok<int>>(output);
+        Assert.Equal(result.Value, ok.Value);
+    }
+
+    [Fact]
+    public void Ok_WhenFailure_ThenReturnsProblem()
+    {
+        // Arrange
+        var error = new Error("ErrorCode", "ErrorDescription", ErrorType.Failure);
+        var result = Result.Failure<int>(error);
+
+        // Act
+        var output = result.Ok();
+
+        // Assert
+        Assert.IsType<ProblemHttpResult>(output);
+    }
+
+    [Fact]
+    public void NoContent_WhenSuccess_ThenReturnNoContent()
+    {
+        // Arrange
         var result = Result.Success();
 
         // Act
-        var output = result.Match(successCallback.Object, failureCallback.Object);
+        var output = result.NoContent();
 
         // Assert
-        Assert.True(output);
-        successCallback.Verify(c => c(), Times.Once);
-        failureCallback.Verify(c => c(It.IsAny<Result>()), Times.Never);
+        Assert.IsType<NoContent>(output);
     }
 
     [Fact]
-    public void Match_WhenIsSuccessWithValue_ThenCallsOnSuccess()
+    public void NoContent_WhenFailure_ThenReturnsProblem()
     {
         // Arrange
-        var successCallback = new Mock<Func<int, bool>>();
-        successCallback.Setup(c => c(It.IsAny<int>())).Returns(true);
-
-        var failureCallback = new Mock<Func<Result, bool>>();
-        failureCallback.Setup(c => c(It.IsAny<Result>())).Returns(false);
-
-        var result = Result.Success(1);
+        var error = new Error("ErrorCode", "ErrorDescription", ErrorType.Failure);
+        var result = Result.Failure(error);
 
         // Act
-        var output = result.Match(successCallback.Object, failureCallback.Object);
+        var output = result.NoContent();
 
         // Assert
-        Assert.True(output);
-        successCallback.Verify(c => c(result.Value), Times.Once);
-        failureCallback.Verify(c => c(It.IsAny<Result>()), Times.Never);
+        Assert.IsType<ProblemHttpResult>(output);
     }
 
     [Fact]
-    public void Match_WhenIsFailure_ThenCallsOnFailure()
+    public void Created_WhenSuccess_ThenReturnsCreated()
     {
         // Arrange
-        var successCallback = new Mock<Func<bool>>();
-        successCallback.Setup(c => c()).Returns(true);
-
-        var failureCallback = new Mock<Func<Result, bool>>();
-        failureCallback.Setup(c => c(It.IsAny<Result>())).Returns(false);
-
-        var result = Result.Failure(new Error("ErrorCode", "ErrorDescription", ErrorType.Failure));
+        var result = Result.Success(123);
 
         // Act
-        var output = result.Match(successCallback.Object, failureCallback.Object);
+        var output = result.Created(value => $"/api/{value}");
 
         // Assert
-        Assert.False(output);
-        failureCallback.Verify(c => c(result), Times.Once);
-        successCallback.Verify(c => c(), Times.Never);
+        var created = Assert.IsType<Created<int>>(output);
+        Assert.Equal(result.Value, created.Value);
+        Assert.Equal($"/api/{result.Value}", created.Location);
     }
 
     [Fact]
-    public void Match_WhenIsFailureWithValue_ThenCallsOnFailure()
+    public void Created_WhenFailure_ThenReturnsProblem()
     {
         // Arrange
-        var successCallback = new Mock<Func<int, bool>>();
-        successCallback.Setup(c => c(It.IsAny<int>())).Returns(true);
-
-        var failureCallback = new Mock<Func<Result<int>, bool>>();
-        failureCallback.Setup(c => c(It.IsAny<Result<int>>())).Returns(false);
-
-        var result = new Result<int>(1, false, Error.NullValue);
+        var error = new Error("ErrorCode", "ErrorDescription", ErrorType.Failure);
+        var result = Result.Failure<int>(error);
 
         // Act
-        var output = result.Match(successCallback.Object, failureCallback.Object);
+        var output = result.Created(value => $"/api/{value}");
 
         // Assert
-        Assert.False(output);
-        failureCallback.Verify(c => c(result), Times.Once);
-        successCallback.Verify(c => c(It.IsAny<int>()), Times.Never);
+        Assert.IsType<ProblemHttpResult>(output);
     }
 }

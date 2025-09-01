@@ -68,36 +68,27 @@ app.MapPost("/users", async (CreateUserCommand command, IMediator mediator) =>
 
 ---
 
-**2️⃣ Minimal API Endpoint Discovery with API Versioning**
+**2️⃣ Minimal API Endpoint Discovery**
 
-Define endpoints implementing a **versioned interface**, for example `IEndpointV1`:
+Define endpoints implementing a **abstract class**, for example:
 
 ```csharp
-public interface IEndpointV1 : IEndpoint {}
-
-public class UsersEndpoint : IEndpointV1
+public class CreateUserEndpoint : MinimalEndpoint
 {
-    public void MapEndpoint(IEndpointRouteBuilder app)
+    public override void Map(IEndpointRouteBuilder group)
     {
-        app.MapGet("/users/{id}", (Guid id) =>
-        {
-            // ...
-        });
+        ...
     }
 }
 ```
 
-Then register & map automatically for that API version:
+Then register & map automatically:
 
 ```csharp
-builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 var app = builder.Build();
 
-// Register only endpoints for version 1.0
-app.MapEndpoints<IEndpointV1>(new ApiVersion(1, 0));
+app.MapEndpoints(Assembly.GetExecutingAssembly());
 ```
-
-This way, you can easily group endpoints by version without manually registering routes one by one.
 
 ---
 
@@ -112,24 +103,6 @@ This package reuses the same `ErrorType` from **dotnet-cleanarch** and maps them
 - **Failure** → unknown/unexpected error → `ProblemDetails` (`500 Internal Server Error`)
 
 You define errors once in your **application/domain**, and this package handles the **HTTP mapping** consistently.
-
----
-
-## 🔄 Releases & Versioning
-
-This project uses **[semantic-release](https://semantic-release.gitbook.io/semantic-release/)** for fully automated versioning:
-
-- **feat:** → minor version bump (0.x.0 → 0.(x+1).0)
-- **fix:** → patch version bump (0.0.x → 0.0.(x+1))
-- **feat!: / BREAKING CHANGE:** → major version bump (x.0.0 → (x+1).0.0)
-
-Every merge into `main` automatically:
-
-- Updates `CHANGELOG.md`
-- Creates a GitHub release
-- Publishes a new version to NuGet
-
-See all changes in the [CHANGELOG.md](./CHANGELOG.md).
 
 ---
 

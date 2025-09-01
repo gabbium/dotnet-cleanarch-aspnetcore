@@ -8,7 +8,7 @@
   <PropertyGroup Label="Package info">
     <PackageId>Gabbium.CleanArch.AspNetCore</PackageId>
     <PackageDescription>ASP.NET Core building blocks: Minimal APIs, Endpoint pattern, and Result-to-HTTP response mapping</PackageDescription>
-    <PackageTags>clean-architecture;aspnetcore;minimalapi;result;cqrs;ddd</PackageTags>
+    <PackageTags>clean-architecture;aspnetcore;minimalapi;result</PackageTags>
     <Authors>Gabriel Abreu (@gabbium)</Authors>
     <PackageProjectUrl>https://github.com/gabbium/dotnet-cleanarch-aspnetcore</PackageProjectUrl>
     <RepositoryUrl>https://github.com/gabbium/dotnet-cleanarch-aspnetcore</RepositoryUrl>
@@ -28,7 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
     <PackageReference Include="Gabbium.CleanArch" Version="1.0.0" />
   </ItemGroup>
 </Project>

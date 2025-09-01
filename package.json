@@ -1,7 +1,6 @@
 {
-  "name": "@gabbium/dotnet-cleanarch",
+  "name": "dotnet-cleanarch-aspnetcore",
   "version": "1.0.0",
-  "private": true,
   "devDependencies": {
     "@gabbium/semantic-release-nuget": "^1.0.1",
     "@semantic-release/changelog": "^6.0.3",
