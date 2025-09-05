@@ -25,7 +25,7 @@ public static class CustomResults
         );
     }
 
-    private static Dictionary<string, string[]> ToValidationDictionary(ErrorList errorList)
+    public static Dictionary<string, string[]> ToValidationDictionary(ErrorList errorList)
     {
         return errorList.Errors
             .GroupBy(e => e.Code)
@@ -35,7 +35,7 @@ public static class CustomResults
             );
     }
 
-    private static string GetTitle(Error error) =>
+    public static string GetTitle(Error error) =>
         error.Type switch
         {
             ErrorType.Validation => "Validation failure",
@@ -45,7 +45,7 @@ public static class CustomResults
             _ => "Server failure"
         };
 
-    private static string GetDetail(Error error) =>
+    public static string GetDetail(Error error) =>
         error.Type switch
         {
             ErrorType.Validation => error.Description,
@@ -55,7 +55,7 @@ public static class CustomResults
             _ => "An unexpected error occurred"
         };
 
-    private static string GetType(ErrorType errorType) =>
+    public static string GetType(ErrorType errorType) =>
         errorType switch
         {
             ErrorType.Validation => "https://tools.ietf.org/html/rfc7231#section-6.5.1",
@@ -65,7 +65,7 @@ public static class CustomResults
             _ => "https://tools.ietf.org/html/rfc7231#section-6.6.1"
         };
 
-    private static int GetStatusCode(ErrorType errorType) =>
+    public static int GetStatusCode(ErrorType errorType) =>
         errorType switch
         {
             ErrorType.Validation or ErrorType.Problem => StatusCodes.Status400BadRequest,
