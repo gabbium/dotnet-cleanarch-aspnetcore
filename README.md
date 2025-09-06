@@ -7,9 +7,9 @@
 
 A lightweight **ASP.NET Core integration library** for [dotnet-cleanarch](https://github.com/gabbium/dotnet-cleanarch), providing:
 
-- ✅ **Result → HTTP mappers**
-- ✅ **Minimal API endpoint discovery**
-- ✅ **ProblemDetails integration**
+-   ✅ **Result → HTTP mappers**
+-   ✅ **Minimal API endpoint discovery**
+-   ✅ **ProblemDetails integration**
 
 Designed to **reduce boilerplate** when exposing Clean Architecture building blocks through ASP.NET Core.
 
@@ -17,11 +17,11 @@ Designed to **reduce boilerplate** when exposing Clean Architecture building blo
 
 ## ✨ Features
 
-- ✅ **Map `Result` and `Result<T>` from the domain to proper HTTP responses**
-- ✅ **`Validation` errors → `ValidationProblemDetails` (grouped by field)**
-- ✅ **`Problem` errors → `ProblemDetails` (single business rule error)**
-- ✅ **Automatic Minimal API endpoint registration** via `IEndpoint`
-- ✅ **Seamless integration with `dotnet-cleanarch` core errors**
+-   ✅ **Map `Result` and `Result<T>` from the domain to proper HTTP responses**
+-   ✅ **`Validation` errors → `ValidationProblemDetails` (grouped by field)**
+-   ✅ **`Problem` errors → `ProblemDetails` (single business rule error)**
+-   ✅ **Automatic Minimal API endpoint registration** via `IEndpoint`
+-   ✅ **Seamless integration with `dotnet-cleanarch` core errors**
 
 ---
 
@@ -60,11 +60,12 @@ app.MapPost("/users", async (CreateUserCommand command, IMediator mediator) =>
 
 ✅ `CustomResults.Problem(result)` automatically maps:
 
-- `Validation` → `400 Bad Request` with **ValidationProblemDetails**
-- `Problem` → `400 Bad Request` with **ProblemDetails**
-- `NotFound` → `404 Not Found`
-- `Conflict` → `409 Conflict`
-- `Failure` (default) → `500 Internal Server Error`
+-   `Validation` → `400 Bad Request`
+-   `NotFound` → `404 Not Found`
+-   `Conflict` → `409 Conflict`
+-   `Unauthorized` → `401 Unauthorized`
+-   `Forbidden` → `403 Forbidden`
+-   `Failure` (default) → `500 Internal Server Error`
 
 ---
 
@@ -73,9 +74,9 @@ app.MapPost("/users", async (CreateUserCommand command, IMediator mediator) =>
 Define endpoints implementing a **abstract class**, for example:
 
 ```csharp
-public class CreateUserEndpoint : MinimalEndpoint
+public class CreateUserEndpoint : IEndpoint
 {
-    public override void Map(IEndpointRouteBuilder group)
+    public void Map(IEndpointRouteBuilder builder)
     {
         ...
     }
@@ -89,20 +90,6 @@ var app = builder.Build();
 
 app.MapEndpoints(Assembly.GetExecutingAssembly());
 ```
-
----
-
-## 🧱 Error Types Integration
-
-This package reuses the same `ErrorType` from **dotnet-cleanarch** and maps them to **ProblemDetails** transparently:
-
-- **Validation** → multiple field errors → `ValidationProblemDetails` (`400 Bad Request`)
-- **Problem** → known infrastructure/application issue → `ProblemDetails` (`400 Bad Request`)
-- **NotFound** → missing entity/resource → `ProblemDetails` (`404 Not Found`)
-- **Conflict** → conflicting state → `ProblemDetails` (`409 Conflict`)
-- **Failure** → unknown/unexpected error → `ProblemDetails` (`500 Internal Server Error`)
-
-You define errors once in your **application/domain**, and this package handles the **HTTP mapping** consistently.
 
 ---
 

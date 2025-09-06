@@ -2,13 +2,13 @@ namespace CleanArch.AspNetCore.UnitTests;
 
 public class WebApplicationExtensionsTests
 {
-    private static int _mapCalls;
+    private static int s_mapCalls;
 
-    public class MyMinimalEndpoint : MinimalEndpoint
+    public class MyMinimalEndpoint : IEndpoint
     {
-        public override void Map(IEndpointRouteBuilder group)
+        public void Map(IEndpointRouteBuilder builder)
         {
-            Interlocked.Increment(ref _mapCalls);
+            Interlocked.Increment(ref s_mapCalls);
         }
     }
 
@@ -16,14 +16,16 @@ public class WebApplicationExtensionsTests
     public void MapEndpoints_CallsMapForAllAssemblyEndpoints()
     {
         // Arrange
-        _mapCalls = 0;
+        s_mapCalls = 0;
+
         var builder = WebApplication.CreateBuilder();
+
         var app = builder.Build();
 
         // Act
         app.MapEndpoints(Assembly.GetExecutingAssembly());
 
         // Assert
-        Assert.Equal(1, _mapCalls);
+        Assert.Equal(1, s_mapCalls);
     }
 }

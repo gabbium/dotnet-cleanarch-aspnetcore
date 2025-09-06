@@ -13,15 +13,20 @@ public class CustomResultsTests
     }
 
     [Theory]
-    [InlineData(ErrorType.Validation, StatusCodes.Status400BadRequest, "https://tools.ietf.org/html/rfc7231#section-6.5.1")]
-    [InlineData(ErrorType.Problem, StatusCodes.Status400BadRequest, "https://tools.ietf.org/html/rfc7231#section-6.5.1")]
-    [InlineData(ErrorType.NotFound, StatusCodes.Status404NotFound, "https://tools.ietf.org/html/rfc7231#section-6.5.4")]
-    [InlineData(ErrorType.Conflict, StatusCodes.Status409Conflict, "https://tools.ietf.org/html/rfc7231#section-6.5.8")]
-    [InlineData(ErrorType.Failure, StatusCodes.Status500InternalServerError, "https://tools.ietf.org/html/rfc7231#section-6.6.1")]
-    public void Problem_WhenResultHasError_ThenMapsErrorTypeToExpectedStatusAndLink(ErrorType type, int expectedStatus, string expectedLink)
+    [InlineData(ErrorType.Validation, "Bad Request", StatusCodes.Status400BadRequest, "https://tools.ietf.org/html/rfc7231#section-6.5.1")]
+    [InlineData(ErrorType.NotFound, "Not Found", StatusCodes.Status404NotFound, "https://tools.ietf.org/html/rfc7231#section-6.5.4")]
+    [InlineData(ErrorType.Conflict, "Conflict", StatusCodes.Status409Conflict, "https://tools.ietf.org/html/rfc7231#section-6.5.8")]
+    [InlineData(ErrorType.Unauthorized, "Unauthorized", StatusCodes.Status401Unauthorized, "https://datatracker.ietf.org/doc/html/rfc7235#section-3.1")]
+    [InlineData(ErrorType.Forbidden, "Forbidden", StatusCodes.Status403Forbidden, "https://tools.ietf.org/html/rfc7231#section-6.5.3")]
+    [InlineData(ErrorType.Failure, "Server failure", StatusCodes.Status500InternalServerError, "https://tools.ietf.org/html/rfc7231#section-6.6.1")]
+    public void Problem_WhenResultHasError_ThenMapsErrorTypeToExpectedStatusAndLink(
+        ErrorType type,
+        string expectedCode,
+        int expectedStatus,
+        string expectedLink)
     {
         // Arrange
-        var error = new Error("Some.Code", "Some description", type);
+        var error = new Error(type, "Some description");
         var result = Result.Failure(error);
 
         // Act
@@ -32,34 +37,25 @@ public class CustomResultsTests
 
         Assert.NotNull(problem);
         Assert.Equal(expectedStatus, problem!.StatusCode);
+        Assert.Equal(expectedStatus, problem.ProblemDetails.Status);
         Assert.Equal(expectedLink, problem.ProblemDetails.Type);
+        Assert.Equal(expectedCode, problem.ProblemDetails.Title);
 
         if (type == ErrorType.Failure)
-        {
-            Assert.Equal("Server failure", problem.ProblemDetails.Title);
             Assert.Equal("An unexpected error occurred", problem.ProblemDetails.Detail);
-        }
-        else if (type == ErrorType.Validation)
-        {
-            Assert.Equal("Validation failure", problem.ProblemDetails.Title);
-            Assert.Equal("Some description", problem.ProblemDetails.Detail);
-        }
         else
-        {
-            Assert.Equal("Some.Code", problem.ProblemDetails.Title);
             Assert.Equal("Some description", problem.ProblemDetails.Detail);
-        }
     }
 
     [Fact]
-    public void Problem_WhenErrorListIsUsed_ThenAddErrorsToExtensions()
+    public void Problem_WhenValidationErrorListIsUsed_ThenAddErrorsToExtensions()
     {
         // Arrange
-        var errorList = new ErrorList("Validation.General",
+        var errorList = new ValidationErrorList(
         [
-            Error.Validation("Email", "Invalid email"),
-            Error.Validation("Password", "Weak password"),
-            Error.Validation("Password", "Too short")
+            new("Email", "Invalid email"),
+            new("Password", "Weak password"),
+            new("Password", "Too short")
         ]);
 
         var result = Result.Failure(errorList);
@@ -73,7 +69,7 @@ public class CustomResultsTests
 
         Assert.NotNull(validationResult);
         Assert.Equal(StatusCodes.Status400BadRequest, validationResult.Status);
-        Assert.Equal("One or more validation errors occurred", validationResult.Title);
+        Assert.Equal("Bad Request", validationResult.Title);
 
         var fieldErrors = validationResult.Errors;
 
