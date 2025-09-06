@@ -1,4 +1,4 @@
-namespace CleanArch.AspNetCore;
+﻿namespace CleanArch.AspNetCore;
 
 public static class WebApplicationExtensions
 {
@@ -7,13 +7,12 @@ public static class WebApplicationExtensions
         var baseGroup = app.MapGroup("/api");
 
         var endpointTypes = assembly.DefinedTypes
-            .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(MinimalEndpoint)))
-            .OrderBy(t => t.FullName)
-            .ToArray();
+            .Where(t => !t.IsAbstract && typeof(IEndpoint).IsAssignableFrom(t))
+            .OrderBy(t => t.FullName);
 
         foreach (var type in endpointTypes)
         {
-            if (Activator.CreateInstance(type) is MinimalEndpoint instance)
+            if (ActivatorUtilities.CreateInstance(app.Services, type) is IEndpoint instance)
             {
                 instance.Map(baseGroup);
             }
@@ -22,4 +21,3 @@ public static class WebApplicationExtensions
         return app;
     }
 }
-

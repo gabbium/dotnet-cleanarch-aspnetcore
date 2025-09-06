@@ -1,4 +1,4 @@
-namespace CleanArch.AspNetCore;
+﻿namespace CleanArch.AspNetCore;
 
 public static class CustomResults
 {
@@ -7,41 +7,47 @@ public static class CustomResults
         if (result.IsSuccess)
             throw new InvalidOperationException("Can't return Problem for a successful result");
 
-        if (result.Error is ErrorList validationErrors)
+        return Problem(result.Error!);
+    }
+
+    public static IResult Problem(Error error)
+    {
+        if (error is ValidationErrorList vel)
         {
             return Results.ValidationProblem(
-                errors: ToValidationDictionary(validationErrors),
-                title: "One or more validation errors occurred",
-                type: "https://tools.ietf.org/html/rfc7231#section-6.5.1",
-                statusCode: StatusCodes.Status400BadRequest
+                errors: ToValidationDictionary(vel),
+                title: GetTitle(error),
+                type: GetType(error.Type),
+                statusCode: GetStatusCode(error.Type)
             );
         }
 
         return Results.Problem(
-            title: GetTitle(result.Error),
-            detail: GetDetail(result.Error),
-            type: GetType(result.Error.Type),
-            statusCode: GetStatusCode(result.Error.Type)
+            title: GetTitle(error),
+            detail: GetDetail(error),
+            type: GetType(error.Type),
+            statusCode: GetStatusCode(error.Type)
         );
     }
 
-    public static Dictionary<string, string[]> ToValidationDictionary(ErrorList errorList)
+    public static Dictionary<string, string[]> ToValidationDictionary(ValidationErrorList errorList)
     {
         return errorList.Errors
-            .GroupBy(e => e.Code)
+            .GroupBy(e => e.PropertyName)
             .ToDictionary(
                 g => g.Key,
-                g => g.Select(e => e.Description).ToArray()
+                g => g.Select(e => e.Message).ToArray()
             );
     }
 
     public static string GetTitle(Error error) =>
         error.Type switch
         {
-            ErrorType.Validation => "Validation failure",
-            ErrorType.Problem => error.Code,
-            ErrorType.NotFound => error.Code,
-            ErrorType.Conflict => error.Code,
+            ErrorType.Validation => "Bad Request",
+            ErrorType.NotFound => "Not Found",
+            ErrorType.Conflict => "Conflict",
+            ErrorType.Unauthorized => "Unauthorized",
+            ErrorType.Forbidden => "Forbidden",
             _ => "Server failure"
         };
 
@@ -49,9 +55,10 @@ public static class CustomResults
         error.Type switch
         {
             ErrorType.Validation => error.Description,
-            ErrorType.Problem => error.Description,
             ErrorType.NotFound => error.Description,
             ErrorType.Conflict => error.Description,
+            ErrorType.Unauthorized => error.Description,
+            ErrorType.Forbidden => error.Description,
             _ => "An unexpected error occurred"
         };
 
@@ -59,18 +66,21 @@ public static class CustomResults
         errorType switch
         {
             ErrorType.Validation => "https://tools.ietf.org/html/rfc7231#section-6.5.1",
-            ErrorType.Problem => "https://tools.ietf.org/html/rfc7231#section-6.5.1",
             ErrorType.NotFound => "https://tools.ietf.org/html/rfc7231#section-6.5.4",
             ErrorType.Conflict => "https://tools.ietf.org/html/rfc7231#section-6.5.8",
+            ErrorType.Unauthorized => "https://datatracker.ietf.org/doc/html/rfc7235#section-3.1",
+            ErrorType.Forbidden => "https://tools.ietf.org/html/rfc7231#section-6.5.3",
             _ => "https://tools.ietf.org/html/rfc7231#section-6.6.1"
         };
 
     public static int GetStatusCode(ErrorType errorType) =>
         errorType switch
         {
-            ErrorType.Validation or ErrorType.Problem => StatusCodes.Status400BadRequest,
+            ErrorType.Validation => StatusCodes.Status400BadRequest,
             ErrorType.NotFound => StatusCodes.Status404NotFound,
             ErrorType.Conflict => StatusCodes.Status409Conflict,
+            ErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
+            ErrorType.Forbidden => StatusCodes.Status403Forbidden,
             _ => StatusCodes.Status500InternalServerError
         };
 }
