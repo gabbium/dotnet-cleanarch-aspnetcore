@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/gabbium/dotnet-cleanarch-aspnetcore/compare/v1.1.1...v1.2.0) (2025-09-06)
+
+
+### Features
+
+* add new error types ([#3](https://github.com/gabbium/dotnet-cleanarch-aspnetcore/issues/3)) ([11b28e7](https://github.com/gabbium/dotnet-cleanarch-aspnetcore/commit/11b28e79e29cc813b5edbc143799274af0380c88))
+
 ## [1.1.1](https://github.com/gabbium/dotnet-cleanarch-aspnetcore/compare/v1.1.0...v1.1.1) (2025-09-05)
 
 
