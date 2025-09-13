@@ -1,10 +1,10 @@
 namespace CleanArch.AspNetCore.UnitTests;
 
-public class WebApplicationExtensionsTests
+public class EndpointRouteBuilderExtensionsTests
 {
     private static int s_mapCalls;
 
-    public class MyMinimalEndpoint : IEndpoint
+    public class MyApi : IApi
     {
         public void Map(IEndpointRouteBuilder builder)
         {
@@ -13,7 +13,7 @@ public class WebApplicationExtensionsTests
     }
 
     [Fact]
-    public void MapEndpoints_CallsMapForAllAssemblyEndpoints()
+    public void MapApis_CallsMapForAllAssemblyApis()
     {
         // Arrange
         s_mapCalls = 0;
@@ -23,7 +23,7 @@ public class WebApplicationExtensionsTests
         var app = builder.Build();
 
         // Act
-        app.MapEndpoints(Assembly.GetExecutingAssembly());
+        app.MapApis(Assembly.GetExecutingAssembly());
 
         // Assert
         Assert.Equal(1, s_mapCalls);
