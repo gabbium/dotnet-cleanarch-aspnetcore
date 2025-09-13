@@ -1,3 +1,13 @@
+## [2.0.0](https://github.com/gabbium/dotnet-cleanarch-aspnetcore/compare/v1.2.0...v2.0.0) (2025-09-13)
+
+### ⚠ BREAKING CHANGES
+
+* update clean arch to v2 + replace iendpoint to iapi (#4)
+
+### Features
+
+* update clean arch to v2 + replace iendpoint to iapi ([#4](https://github.com/gabbium/dotnet-cleanarch-aspnetcore/issues/4)) ([6ba85c2](https://github.com/gabbium/dotnet-cleanarch-aspnetcore/commit/6ba85c2f9034d62ec4923ad5b58cf68eb83ac492))
+
 # [1.2.0](https://github.com/gabbium/dotnet-cleanarch-aspnetcore/compare/v1.1.1...v1.2.0) (2025-09-06)
 
 
