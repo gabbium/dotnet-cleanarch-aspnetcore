@@ -1,6 +1,6 @@
 ﻿namespace CleanArch.AspNetCore;
 
-public interface IEndpoint
+public interface IApi
 {
     void Map(IEndpointRouteBuilder builder);
 }

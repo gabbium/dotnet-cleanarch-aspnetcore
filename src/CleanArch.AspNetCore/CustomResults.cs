@@ -33,10 +33,10 @@ public static class CustomResults
     public static Dictionary<string, string[]> ToValidationDictionary(ValidationErrorList errorList)
     {
         return errorList.Errors
-            .GroupBy(e => e.PropertyName)
+            .GroupBy(error => error.PropertyName)
             .ToDictionary(
-                g => g.Key,
-                g => g.Select(e => e.Message).ToArray()
+                group => group.Key,
+                group => group.Select(error => error.Message).ToArray()
             );
     }
 
@@ -48,6 +48,7 @@ public static class CustomResults
             ErrorType.Conflict => "Conflict",
             ErrorType.Unauthorized => "Unauthorized",
             ErrorType.Forbidden => "Forbidden",
+            ErrorType.Business => "Unprocessable Entity",
             _ => "Server failure"
         };
 
@@ -59,18 +60,20 @@ public static class CustomResults
             ErrorType.Conflict => error.Description,
             ErrorType.Unauthorized => error.Description,
             ErrorType.Forbidden => error.Description,
+            ErrorType.Business => error.Description,
             _ => "An unexpected error occurred"
         };
 
     public static string GetType(ErrorType errorType) =>
         errorType switch
         {
-            ErrorType.Validation => "https://tools.ietf.org/html/rfc7231#section-6.5.1",
-            ErrorType.NotFound => "https://tools.ietf.org/html/rfc7231#section-6.5.4",
-            ErrorType.Conflict => "https://tools.ietf.org/html/rfc7231#section-6.5.8",
-            ErrorType.Unauthorized => "https://datatracker.ietf.org/doc/html/rfc7235#section-3.1",
-            ErrorType.Forbidden => "https://tools.ietf.org/html/rfc7231#section-6.5.3",
-            _ => "https://tools.ietf.org/html/rfc7231#section-6.6.1"
+            ErrorType.Validation => "https://www.rfc-editor.org/rfc/rfc9110#name-400-bad-request",
+            ErrorType.NotFound => "https://www.rfc-editor.org/rfc/rfc9110#name-404-not-found",
+            ErrorType.Conflict => "https://www.rfc-editor.org/rfc/rfc9110#name-409-conflict",
+            ErrorType.Unauthorized => "https://www.rfc-editor.org/rfc/rfc9110#name-401-unauthorized",
+            ErrorType.Forbidden => "https://www.rfc-editor.org/rfc/rfc9110#name-403-forbidden",
+            ErrorType.Business => "https://www.rfc-editor.org/rfc/rfc9110#name-422-unprocessable-content",
+            _ => "https://www.rfc-editor.org/rfc/rfc9110#name-500-internal-server-error"
         };
 
     public static int GetStatusCode(ErrorType errorType) =>
@@ -81,6 +84,7 @@ public static class CustomResults
             ErrorType.Conflict => StatusCodes.Status409Conflict,
             ErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
             ErrorType.Forbidden => StatusCodes.Status403Forbidden,
+            ErrorType.Business => StatusCodes.Status422UnprocessableEntity,
             _ => StatusCodes.Status500InternalServerError
         };
 }

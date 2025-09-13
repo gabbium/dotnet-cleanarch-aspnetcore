@@ -13,12 +13,13 @@ public class CustomResultsTests
     }
 
     [Theory]
-    [InlineData(ErrorType.Validation, "Bad Request", StatusCodes.Status400BadRequest, "https://tools.ietf.org/html/rfc7231#section-6.5.1")]
-    [InlineData(ErrorType.NotFound, "Not Found", StatusCodes.Status404NotFound, "https://tools.ietf.org/html/rfc7231#section-6.5.4")]
-    [InlineData(ErrorType.Conflict, "Conflict", StatusCodes.Status409Conflict, "https://tools.ietf.org/html/rfc7231#section-6.5.8")]
-    [InlineData(ErrorType.Unauthorized, "Unauthorized", StatusCodes.Status401Unauthorized, "https://datatracker.ietf.org/doc/html/rfc7235#section-3.1")]
-    [InlineData(ErrorType.Forbidden, "Forbidden", StatusCodes.Status403Forbidden, "https://tools.ietf.org/html/rfc7231#section-6.5.3")]
-    [InlineData(ErrorType.Failure, "Server failure", StatusCodes.Status500InternalServerError, "https://tools.ietf.org/html/rfc7231#section-6.6.1")]
+    [InlineData(ErrorType.Validation, "Bad Request", StatusCodes.Status400BadRequest, "https://www.rfc-editor.org/rfc/rfc9110#name-400-bad-request")]
+    [InlineData(ErrorType.NotFound, "Not Found", StatusCodes.Status404NotFound, "https://www.rfc-editor.org/rfc/rfc9110#name-404-not-found")]
+    [InlineData(ErrorType.Conflict, "Conflict", StatusCodes.Status409Conflict, "https://www.rfc-editor.org/rfc/rfc9110#name-409-conflict")]
+    [InlineData(ErrorType.Unauthorized, "Unauthorized", StatusCodes.Status401Unauthorized, "https://www.rfc-editor.org/rfc/rfc9110#name-401-unauthorized")]
+    [InlineData(ErrorType.Forbidden, "Forbidden", StatusCodes.Status403Forbidden, "https://www.rfc-editor.org/rfc/rfc9110#name-403-forbidden")]
+    [InlineData(ErrorType.Business, "Unprocessable Entity", StatusCodes.Status422UnprocessableEntity, "https://www.rfc-editor.org/rfc/rfc9110#name-422-unprocessable-content")]
+    [InlineData(ErrorType.Failure, "Server failure", StatusCodes.Status500InternalServerError, "https://www.rfc-editor.org/rfc/rfc9110#name-500-internal-server-error")]
     public void Problem_WhenResultHasError_ThenMapsErrorTypeToExpectedStatusAndLink(
         ErrorType type,
         string expectedCode,
